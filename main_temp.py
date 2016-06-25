@@ -2,7 +2,7 @@
 # @Author: prabhakar
 # @Date:   2016-06-23 00:22:41
 # @Last Modified by:   Prabhakar Gupta
-# @Last Modified time: 2016-06-25 17:40:43
+# @Last Modified time: 2016-06-25 18:47:44
 
 import requests
 import sys
@@ -10,9 +10,11 @@ import json
 
 from constants import ERROR_DICT, GITHUB_URL
 
+
 def get_json_response(url):
     response = requests.get(url)
     return json.loads(response.text)
+
 
 def add_email(email_set, email, max_len):
     if len(email_set) >= max_len:
@@ -22,6 +24,7 @@ def add_email(email_set, email, max_len):
         break_flag = False
 
     return email_set, break_flag
+
 
 def main():
     user_email = set([])
@@ -78,13 +81,22 @@ def main():
 
 
 if __name__ == "__main__":
-    response = main()
+    email_response = main()
     
-    if type(response) == set:
-        for email in response:
-            print email
+    if type(email_response) == set:
+        response = {
+            'success' : True,
+            'email': list(email_response)
+        }
     else:
-        if response in ERROR_DICT.keys():
-            print ERROR_DICT[response]
+        if email_response in ERROR_DICT.keys():
+            message = ERROR_DICT[email_response]
         else:
-            print response
+            message = email_response
+
+        response = {
+            'success' : False,
+            'message' : message,
+        }
+
+    print response
