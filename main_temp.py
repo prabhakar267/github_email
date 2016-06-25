@@ -2,7 +2,7 @@
 # @Author: prabhakar
 # @Date:   2016-06-23 00:22:41
 # @Last Modified by:   Prabhakar Gupta
-# @Last Modified time: 2016-06-25 15:49:49
+# @Last Modified time: 2016-06-25 17:40:43
 
 import requests
 import sys
@@ -18,12 +18,7 @@ def add_email(email_set, email, max_len):
     if len(email_set) >= max_len:
         break_flag = True
     else:
-        old_set_length = len(email_set)
         email_set = email_set | set([email])
-
-        if len(email_set) > old_set_length:
-            print "{0} email(s) found".format(len(email_set))
-
         break_flag = False
 
     return email_set, break_flag
@@ -44,18 +39,19 @@ def main():
         # some error encountered
         if 'message' in response:
             return response['message']
+
         user_name = response['name']
 
         users_repository_url = GITHUB_URL + "users/{0}/repos?type=owner&sort=updated".format(user)
         response = get_json_response(users_repository_url)
         
+        break_flag = False
         for repo in response:
             if not repo['fork']:
                 users_repository_name = repo['full_name']
                 repos_commit_url = GITHUB_URL + "repos/{0}/commits".format(users_repository_name)
                 commit_reponse = get_json_response(repos_commit_url)
                 
-                break_flag = False
                 possible_positions = ['committer', 'author']
 
                 for commit in commit_reponse:
@@ -63,11 +59,11 @@ def main():
                         if (commit['commit'][i]['name'] == user_name):
                             user_email, break_flag = add_email(user_email, commit['commit'][i]['email'], max_email)
 
-                        if break_flag:
-                            break
+                    if break_flag:
+                        break
 
-                if break_flag:
-                    break
+            if break_flag:
+                break
 
         return user_email
 
@@ -84,11 +80,11 @@ def main():
 if __name__ == "__main__":
     response = main()
     
-    if type(response) == unicode:
-        print ERROR_DICT[response]
-    else:
+    if type(response) == set:
         for email in response:
             print email
-
-
-# "API rate limit exceeded for 106.51.31.23. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)"
+    else:
+        if response in ERROR_DICT.keys():
+            print ERROR_DICT[response]
+        else:
+            print response
