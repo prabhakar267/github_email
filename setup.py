@@ -2,7 +2,7 @@
 # @Author: prabhakar
 # @Date:   2016-06-25 20:13:13
 # @Last Modified by:   Prabhakar Gupta
-# @Last Modified time: 2016-06-25 20:41:38
+# @Last Modified time: 2016-06-25 21:17:30
 
 from setuptools import setup
 
@@ -18,6 +18,5 @@ setup(
     download_url='https://github.com/prabhakar267/github_email/tarball/0.0.1',
     keywords=['github', 'email', 'user', 'public', 'commit', 'get'],
     license='MIT',
-    install_requires=['requests', 'json'],
-    zip_safe=False
+    install_requires=['requests'],
 )
