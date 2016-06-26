@@ -39,3 +39,10 @@ else:
 ## Example
 ![github_email](screenshots/Screenshot from 2016-06-26 06:41:23.png?raw=true)
 
+## Inspiration
+[**github-email**](https://github.com/paulirish/github-email) by `paulirish`
+I wanted to write a module, so as to use this in other projects
+
+## License
+[MIT](LICENSE)
+
