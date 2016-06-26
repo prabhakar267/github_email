@@ -42,7 +42,3 @@ else:
 ## Inspiration
 [**github-email**](https://github.com/paulirish/github-email) by `paulirish`
 I wanted to write a module, so as to use this in other projects
-
-## License
-[MIT](LICENSE)
-
