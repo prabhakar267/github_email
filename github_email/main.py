@@ -2,7 +2,7 @@
 # @Author: prabhakar
 # @Date:   2016-06-23 00:22:41
 # @Last Modified by:   Prabhakar Gupta
-# @Last Modified time: 2016-06-26 05:56:12
+# @Last Modified time: 2016-06-27 22:46:13
 
 import requests
 import json
@@ -97,14 +97,14 @@ Function to get the emails associated to a username on GitHub
 
 :params:
     username    string      a valid GitHub username
-    num         integer     maximum number of email ID to be fetched, default 100
+    num         integer     maximum number of email ID to be fetched, default 1
 :return:
     response    JSON response
         success     boolean     flag to determine other key in JSON
         email       list        if 'success' is True, list of all the emails fetched
         message     string      if 'success' is False, returns the error message
 """
-def get(username, num=100):
+def get(username, num=1):
     github_email_response = __get_github_emails(username, num)
     
     if type(github_email_response) == set:
