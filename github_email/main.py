@@ -2,7 +2,7 @@
 # @Author: prabhakar
 # @Date:   2016-06-23 00:22:41
 # @Last Modified by:   Prabhakar Gupta
-# @Last Modified time: 2016-06-27 22:46:13
+# @Last Modified time: 2016-06-27 23:03:13
 
 import requests
 import json
@@ -49,6 +49,7 @@ Function to get user emails using GitHub APIs
 """
 def __get_github_emails(user, max_limit):
     user_email = set([])
+    break_flag = False
     try:
         users_profile_url = GITHUB_URL + "users/{0}".format(user)
         response = __get_json_response(users_profile_url)
@@ -60,30 +61,36 @@ def __get_github_emails(user, max_limit):
             else:
                 return response['message']
 
+
         user_name = response['name']
 
-        users_repository_url = GITHUB_URL + "users/{0}/repos?type=owner&sort=updated".format(user)
-        response = __get_json_response(users_repository_url)
-        
-        break_flag = False
-        for repo in response:
-            if not repo['fork']:
-                users_repository_name = repo['full_name']
-                repos_commit_url = GITHUB_URL + "repos/{0}/commits".format(users_repository_name)
-                commit_reponse = __get_json_response(repos_commit_url)
-                
-                possible_positions = ['committer', 'author']
+        # if user has a public email, add that to the set of emails
+        if response['email']:
+            user_email, break_flag = __add_email(user_email, response['email'], max_limit)
 
-                for commit in commit_reponse:
-                    for i in possible_positions:
-                        if (commit['commit'][i]['name'] == user_name):
-                            user_email, break_flag = __add_email(user_email, commit['commit'][i]['email'], max_limit)
+        if not break_flag:
+            users_repository_url = GITHUB_URL + "users/{0}/repos?type=owner&sort=updated".format(user)
+            response = __get_json_response(users_repository_url)
 
-                    if break_flag:
-                        break
+            for repo in response:
+                if not repo['fork']:
+                    users_repository_name = repo['full_name']
+                    repos_commit_url = GITHUB_URL + "repos/{0}/commits".format(users_repository_name)
+                    commit_reponse = __get_json_response(repos_commit_url)
+                    
+                    possible_positions = ['committer', 'author']
 
-            if break_flag:
-                break
+                    for commit in commit_reponse:
+                        for i in possible_positions:
+                            if (commit['commit'][i]['name'] == user_name):
+                                user_email, break_flag = __add_email(user_email, commit['commit'][i]['email'], max_limit)
+
+                        if break_flag:
+                            break
+
+                if break_flag:
+                    break
+
         if len(user_email) > 0:
             return user_email
         else:
