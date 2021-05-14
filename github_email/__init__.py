@@ -4,4 +4,4 @@
 # @Last Modified by:   Prabhakar Gupta
 # @Last Modified time: 2016-06-26 06:16:48
 
-from main import get
+from .main import get
